@@ -4,10 +4,11 @@ use std::time::{Instant};
 
 fn main() {
     //time object used to measure execution time
-    let now = Instant::now();
+    let mut now = Instant::now();
 
     //vector containing all integers in defined range
-    let mut a: Vec<i32> = (1..=10_000_000).collect();
+    let mut a: Vec<i32> = (1..=100_000).collect();
+    let mut b: Vec<i32> = (1..=100_000).collect();
     
     //shuffle vector
     {
@@ -20,8 +21,19 @@ fn main() {
     //sort vector
     int32_sort(&mut a, 0, end);
 
-    println!("{} items sorted.", a.len());
-    println!("Execution time: {}ms", (now.elapsed().as_secs() * 1_000) + (now.elapsed().subsec_nanos() / 1_000_000) as u64);
+    println!("{} items sorted using quicksort.", a.len());
+    let mut sec = now.elapsed().as_secs();
+    let mut nano = now.elapsed().subsec_nanos();
+    println!("Execution time: {}ms", (sec * 1_000) + (nano / 1_000_000) as u64);
+    
+    now = Instant::now();
+    
+    b.sort();
+    
+    sec = now.elapsed().as_secs();
+    nano = now.elapsed().subsec_nanos();
+    println!("{} items sorted using sort().", b.len());
+    println!("Execution time: {}ms", (sec * 1_000) + (nano / 1_000_000) as u64);
 }
 
 fn int32_sort(mut vec: &mut Vec<i32>, lo: usize, hi: usize){
