@@ -1,23 +1,37 @@
 extern crate rand;
 use rand::Rng;
+use std::time::{Instant};
 
 fn main() {
-    let mut a: Vec<i32> = (1..=10).collect();
+    //time object used to measure execution time
+    let now = Instant::now();
+
+    //vector containing all integers in defined range
+    let mut a: Vec<i32> = (1..=10_000_000).collect();
+    
+    //shuffle vector
     {
         let slice: &mut [i32] = &mut a;
         let mut rng = rand::thread_rng();
         rng.shuffle(slice);
-        println!("Initial values: {:?}", slice);
     }
     let end: usize = a.len() - 1;
+
+    //sort vector
     int32_sort(&mut a, 0, end);
-    println!("Final values: {:?}", a);
+
+    println!("{} items sorted.", a.len());
+    println!("Execution time: {}ms", (now.elapsed().as_secs() * 1_000) + (now.elapsed().subsec_nanos() / 1_000_000) as u64);
 }
 
 fn int32_sort(mut vec: &mut Vec<i32>, lo: usize, hi: usize){
     if hi <= lo { return };
+
+    //find partition index
     let j: usize = partition(vec, lo, hi);
+    //sort lower partition
     int32_sort(&mut vec, lo, j-1);
+    //sort upper partition
     int32_sort(&mut vec, j+1, hi);
 }
 
@@ -33,8 +47,10 @@ fn partition(vec: &mut Vec<i32>, lo: usize, hi: usize) -> usize{
         }
         j -= 1;
         while v < vec[j] {
-            if j == lo{ break;}
-            j -= 1;
+            if j == lo || j == 1{ break;}
+            if j > 1{
+                j -= 1
+            };
         }
         if i >= j { break; }
         if j == vec.len() { j -= 1; }
